@@ -8,8 +8,8 @@
 
 # How to install
 1. Run `docker-compose up -d`
-2. Go to http://demo-proxy.localhost/ to see traefik dashboard
-4. Go to http://demo.localhost/ to test nginx & php works as expected
+2. Go to http://api-proxy.localhost/ to see traefik dashboard
+4. Go to http://api.localhost/ to test nginx & php works as expected
 3. Go into php container `docker exec -it demo-app sh`
    1. Run `composer install`
    2. Run `php ./src/redis/test.php` to test redis.

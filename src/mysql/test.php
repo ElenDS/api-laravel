@@ -1,6 +1,6 @@
 <?php
 
-$pdo = new PDO('mysql:dbname=demo;host=demo-mysql', 'root', 'root');
+$pdo = new PDO('mysql:dbname=api;host=api-mysql', 'root', 'root');
 
 $sql = 'select @@version';
 

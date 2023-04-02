@@ -2,9 +2,9 @@
 
 
 $config = [
-    'host' => 'demo-rabbit',
+    'host' => 'api-rabbit',
     'user' => 'guest',
     'pass' => 'guest',
     'exchange' => 'router',
-    'queue' => 'demo_queue',
+    'queue' => 'api_queue',
 ];
