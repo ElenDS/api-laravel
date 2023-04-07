@@ -1,0 +1,19 @@
+POST http://api.localhost/api/users
+Accept: application/json
+Content-type: application/json
+
+{
+  "users": [
+      {
+          "username": "000com",
+          "email": "olenadodon000@gmail.com",
+          "country_code": "UA"
+      },
+      {
+          "username": "nsssse",
+          "email": "test@gmail.com",
+          "country_code": "BV"
+      }
+  ]
+}
+
