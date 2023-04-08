@@ -3,17 +3,166 @@ Accept: application/json
 Content-type: application/json
 
 {
-  "users": [
-      {
-          "username": "000com",
-          "email": "olenadodon000@gmail.com",
-          "country_code": "UA"
-      },
-      {
-          "username": "nsssse",
-          "email": "test@gmail.com",
-          "country_code": "BV"
-      }
-  ]
+    "users": [
+        {
+            "username": "000com",
+            "email": "test000@gmail.com",
+            "country_code": "UA"
+        },
+        {
+            "username": "nsssse",
+            "email": "test@gmail.com",
+            "country_code": "BV"
+        }
+    ]
 }
+
+###
+PUT http://api.localhost/api/users
+Accept: application/json
+Content-type: application/json
+
+{
+    "users": [
+        {
+            "username": "000111com",
+            "email": "test000@gmail.com",
+            "country_code": "UA"
+        },
+        {
+            "username": "nsssse",
+            "email": "test@gmail.com",
+            "country_code": "WF"
+        }
+    ],
+    "email": "test000@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+GET http://api.localhost/api/users
+Accept: application/json
+Content-type: application/json
+
+###
+POST http://api.localhost/api/label
+Accept: application/json
+Content-type: application/json
+
+{
+    "label": {
+        "name": "label5"
+    },
+    "email": "test000@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+PUT http://api.localhost/api/label/{id}
+Accept: application/json
+Content-type: application/json
+
+{
+"label": {
+"name": "labe"
+},
+"email": "test000@gmail.com",
+"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+DELETE http://api.localhost/api/label/{id}
+Accept: application/json
+Content-type: application/json
+
+{
+"email": "test000@gmail.com",
+"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+GET http://api.localhost/api/labels
+Accept: application/json
+Content-type: application/json
+
+{
+"email": "test000@gmail.com",
+"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+POST http://api.localhost/api/project
+Accept: application/json
+Content-type: application/json
+
+{
+    "project": {
+            "name": "project9"
+        },
+    "members": [
+      {
+        "email": "olenadodon000@gmail.com"
+      }
+    ],
+    "labels": [
+        {
+            "name": "label3"
+        },
+        {
+            "name": "label1"
+        }
+    ],
+
+    "email": "test000@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+PUT http://api.localhost/api/project/{id}
+Accept: application/json
+Content-type: application/json
+
+{
+    "project": {
+        "name": "project"
+    },
+    "members": [
+        {
+            "email": "test@gmail.com"
+        }
+    ],
+    "labels": [
+        {
+            "name": "label5"
+        },
+        {
+            "name": "label1"
+        }
+    ],
+
+    "email": "test000@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+DELETE http://api.localhost/api/project/{id}
+Accept: application/json
+Content-type: application/json
+
+{
+    "email": "test000@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+###
+GET http://api.localhost/api/projects
+Accept: application/json
+Content-type: application/json
+
+{
+    "email": "test00@gmail.com",
+    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+}
+
+
 

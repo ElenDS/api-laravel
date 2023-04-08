@@ -5,76 +5,92 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
-use App\Jobs\SendEmailVerificationJob;
-use App\Models\Link;
-use App\Repositories\CountryRepository;
 use App\Repositories\UserRepository;
+use App\Services\CreateUserDataService;
+use App\Services\SendVerifyLinkService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class UserController
 {
+    public function __construct(protected UserRepository $userRepository)
+    {
+    }
+
     public function createUsers(
         UserRequest $request,
-        UserRepository $userRepository,
-        CountryRepository $countryRepository
-    ) {
-        $dataUsers = [];
-        foreach ($request['users'] as $user) {
-            $dataUsers[] = [
-                'name' => $user['username'],
-                'email' => $user['email'],
-                'country_id' => $countryRepository->findByCountryCode($user['country_code'])
-            ];
-        }
+        CreateUserDataService $dataService,
+        SendVerifyLinkService $linkService
+    ): JsonResponse {
+        $dataUsers = $dataService->createDataUser($request->get('users'));
+
         try {
             DB::beginTransaction();
-            $userRepository->createUsers($dataUsers);
+            $this->userRepository->createUsers($dataUsers);
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
 
-            return response('Invalid data')->header('error message', $exception->getMessage());
+            return response()->json(['error message' => $exception->getMessage()]);
         }
 
         foreach ($dataUsers as $user) {
-            $this->sendVerificationMail($user['email']);
+            $id = $this->userRepository->findUserByEmail($user['email'])->id;
+            $linkService->sendVerificationMail($id, $user['email']);
         }
 
-        return response('Users created');
+        return response()->json(['status' => '200', 'message' => 'Users successfully registered']);
     }
 
-    public function sendVerificationMail(string $email): void
-    {
-        $uniqId = uniqid();
-        $link = new Link();
-        $link->email = $email;
-        $link->uniqid = $uniqId;
-        $link->save();
+    public function verifyUser(
+        string $id,
+        string $hash,
+        SendVerifyLinkService $linkService
+    ): JsonResponse {
+        $email = $this->userRepository->findUserById($id)->email;
 
-        $verifLink = 'http://api.localhost/' . $email . '/' . $uniqId;
-
-        SendEmailVerificationJob::dispatch($verifLink, $email);
-    }
-
-    public function verifyUser(string $email, string $uniqid, UserRepository $userRepository): JsonResponse
-    {
-        $link = Link::where([
-            'uniqid' => $uniqid,
-            'email' => $email
-        ])->first();
-        if (!$link) {
+        if (!$linkService->findVerifyLink($email, $hash)) {
             return response()->json(['error' => 'Invalid URL']);
         }
 
-        $user = $userRepository->findUserByEmail($email);
-        $token = uniqid(strval(rand())) . hash('ripemd160', strval(rand()));
-        $user->remember_token = $token;
-        $user->email_verified_at = time();
-        $user->save();
-        $link->delete();
+        $token = $this->userRepository->createToken($email);
+        $linkService->deleteLink($email, $hash);
 
         return response()->json(['status' => '200', 'token' => $token]);
+    }
+
+    public function updateUser(
+        UserRequest $request,
+        CreateUserDataService $dataService,
+    ): JsonResponse {
+        try {
+            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
+            if (!$user) {
+                throw new Exception("Invalid token");
+            }
+
+            $dataUsers = $dataService->createDataUser($request->get('users'));
+
+            DB::beginTransaction();
+            foreach ($dataUsers as $data) {
+                $this->userRepository->updateUser($data);
+            }
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+
+            return response()->json(['error message' => $exception->getMessage()]);
+        }
+
+        return response()->json(['status' => '200', 'message' => 'User successfully updated']);
+    }
+
+    public function listUsers(): JsonResponse
+    {
+        return response()->json([
+            'status' => '200',
+            'users' => $this->userRepository->allUsers()
+        ]);
     }
 }

@@ -11,12 +11,17 @@ class Project extends Model
 
     public function members()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->belongsToMany('App\Models\User');
     }
 
     public function user()
     {
         return $this->belongsTo('App\Models\User');
+    }
+
+    public function labels()
+    {
+        return $this->belongsToMany('App\Models\Label');
     }
 
 }

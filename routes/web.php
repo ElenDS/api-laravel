@@ -17,8 +17,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/{email}/{uniqid}', [\App\Http\Controllers\UserController::class, 'verifyUser']);
-
-Route::get('/123', function () {
-    return view('welcome');
-});
+Route::get('/verify/{id}/{hash}', [\App\Http\Controllers\UserController::class, 'verifyUser']);
