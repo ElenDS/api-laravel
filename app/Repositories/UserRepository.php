@@ -63,4 +63,9 @@ class UserRepository
         return User::find($id)->projects()->where(['user_id' => $id])->get();
     }
 
+    public function deleteUser(array $user): void
+    {
+        $user = $this->findUserByEmail($user['email']);
+        $user->delete();
+    }
 }

@@ -6,7 +6,7 @@ use App\Repositories\CountryRepository;
 
 class CreateUserDataService
 {
-    public function createDataUser(array $request): array
+    public function createDataUsers(array $request): array
     {
         $dataUsers = [];
         foreach ($request as $user) {

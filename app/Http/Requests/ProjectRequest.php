@@ -24,7 +24,7 @@ class ProjectRequest extends FormRequest
     public function rules()
     {
         return [
-            "project.name" => "required",
+            "projects.*.name" => "required",
             "members.*.email" => "required | email",
             "labels.*.name" => "required"
         ];

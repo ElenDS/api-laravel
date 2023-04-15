@@ -23,7 +23,7 @@ class UserController
         CreateUserDataService $dataService,
         SendVerifyLinkService $linkService
     ): JsonResponse {
-        $dataUsers = $dataService->createDataUser($request->get('users'));
+        $dataUsers = $dataService->createDataUsers($request->get('users'));
 
         try {
             DB::beginTransaction();
@@ -60,7 +60,7 @@ class UserController
         return response()->json(['status' => '200', 'token' => $token]);
     }
 
-    public function updateUser(
+    public function updateUsers(
         UserRequest $request,
         CreateUserDataService $dataService,
     ): JsonResponse {
@@ -70,7 +70,7 @@ class UserController
                 throw new Exception("Invalid token");
             }
 
-            $dataUsers = $dataService->createDataUser($request->get('users'));
+            $dataUsers = $dataService->createDataUsers($request->get('users'));
 
             DB::beginTransaction();
             foreach ($dataUsers as $data) {
@@ -83,7 +83,7 @@ class UserController
             return response()->json(['error message' => $exception->getMessage()]);
         }
 
-        return response()->json(['status' => '200', 'message' => 'User successfully updated']);
+        return response()->json(['status' => '200', 'message' => 'Users successfully updated']);
     }
 
     public function listUsers(): JsonResponse
@@ -92,5 +92,27 @@ class UserController
             'status' => '200',
             'users' => $this->userRepository->allUsers()
         ]);
+    }
+
+    public function deleteUsers(UserRequest $request): JsonResponse
+    {
+        try {
+            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
+            if (!$user) {
+                throw new Exception("Invalid token");
+            }
+
+            DB::beginTransaction();
+            foreach ($request->get('users') as $user) {
+                $this->userRepository->deleteUser($user);
+            }
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+
+            return response()->json(['error message' => $exception->getMessage()]);
+        }
+
+        return response()->json(['status' => '200', 'message' => 'Users successfully deleted']);
     }
 }

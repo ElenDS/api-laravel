@@ -19,10 +19,20 @@ class ProjectRepository
         $project->labels()->attach($data['labels']);
     }
 
-    public function updateProject(Project $project, array $data): void
+    public function linkLabelToProject(array $project, int $labelID): void
     {
-        $project->name = $data['name'];
-        $project->save();
+        $project = $this->findProjectByName($project['name']);
+        $project->labels()->attach($labelID);
+    }
+
+    public function linkMemberToProject(Project $project, int $memberID): void
+    {
+        $project->members()->attach($memberID);
+    }
+
+    public function updateProject(array $data): void
+    {
+        $project = $this->findProjectByName($data['name']);
         $project->members()->sync($data['members']);
         $project->labels()->sync($data['labels']);
     }
@@ -35,6 +45,11 @@ class ProjectRepository
     public function listProjectsByOwnerId(int $id): Collection
     {
         return Project::where(['created_by_user' => $id])->get();
+    }
+
+    public function findProjectByName($name): Project
+    {
+        return Project::where(['name' => $name])->first();
     }
 
 }

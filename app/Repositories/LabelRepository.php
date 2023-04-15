@@ -17,12 +17,6 @@ class LabelRepository
         $newLabel->save();
     }
 
-    public function updateLabel(Label $label, array $newLabel): void
-    {
-        $label->name = $newLabel['name'];
-        $label->save();
-    }
-
     public function findLabelByName(string $name): Label
     {
         return Label::where(['name' => $name])->first();
@@ -33,7 +27,7 @@ class LabelRepository
         return Label::where(['created_by_user' => $id])->get();
     }
 
-    public function deleteLabel(Label $label): void
+    public function deleteLabel($label): void
     {
         $label->delete();
     }

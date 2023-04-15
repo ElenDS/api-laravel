@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LabelRequest;
-use App\Models\Label;
 use App\Repositories\LabelRepository;
+use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,8 +15,11 @@ use Illuminate\Http\JsonResponse;
 
 class LabelController extends Controller
 {
-    public function __construct(protected LabelRepository $labelRepository, protected UserRepository $userRepository)
-    {
+    public function __construct(
+        protected LabelRepository $labelRepository,
+        protected UserRepository $userRepository,
+        protected ProjectRepository $projectRepository
+    ) {
     }
 
     public function listLabels(Request $request): JsonResponse
@@ -32,7 +35,7 @@ class LabelController extends Controller
         ]);
     }
 
-    public function createLabel(LabelRequest $request): JsonResponse
+    public function createLabels(LabelRequest $request): JsonResponse
     {
         try {
             $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
@@ -41,7 +44,9 @@ class LabelController extends Controller
             }
 
             DB::beginTransaction();
-            $this->labelRepository->createLabel($request->get('label'), $user->id);
+            foreach ($request->get('labels') as $label) {
+                $this->labelRepository->createLabel($label, $user->id);
+            }
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -49,21 +54,28 @@ class LabelController extends Controller
             return response()->json(['error message' => $exception->getMessage()]);
         }
 
-        return response()->json(['status' => '200', 'message' => 'Label successfully created']);
+        return response()->json(['status' => '200', 'message' => 'Labels successfully created']);
     }
 
-    public function updateLabel(Request $request, Label $label): JsonResponse
+    public function linkLabelsToProjects(Request $request): JsonResponse
     {
         try {
             $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
             if (!$user) {
                 throw new Exception("Invalid token");
-            } elseif ($label->created_by_user !== $user->id) {
-                throw new Exception("The user does not have permission for this action");
             }
 
             DB::beginTransaction();
-            $this->labelRepository->updateLabel($label, $request->get('label'));
+            foreach ($request->get('labels') as $labelData) {
+                $label = $this->labelRepository->findLabelByName($labelData['name']);
+                if ($label->created_by_user !== $user->id) {
+                    throw new Exception("The user does not have permission for this action");
+                }
+
+                array_walk($labelData['projects'], function ($project, $key, $labelID) {
+                    $this->projectRepository->linkLabelToProject($project, $labelID);
+                }, $label->id);
+            }
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -71,21 +83,25 @@ class LabelController extends Controller
             return response()->json(['error message' => $exception->getMessage()]);
         }
 
-        return response()->json(['status' => '200', 'message' => 'Label successfully updated']);
+        return response()->json(['status' => '200', 'message' => 'Labels successfully linked to projects']);
     }
 
-    public function deleteLabel(Request $request, Label $label): JsonResponse
+    public function deleteLabels(Request $request): JsonResponse
     {
         try {
             $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
             if (!$user) {
                 throw new Exception("Invalid token");
-            } elseif ($label->created_by_user !== $user->id) {
-                throw new Exception("The user does not have permission for this action");
             }
 
             DB::beginTransaction();
-            $this->labelRepository->deleteLabel($label);
+            foreach ($request->get('labels') as $label) {
+                $label = $this->labelRepository->findLabelByName($label['name']);
+                if ($label->created_by_user !== $user->id) {
+                    throw new Exception("The user does not have permission for this action");
+                }
+                $this->labelRepository->deleteLabel($label);
+            }
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -93,6 +109,6 @@ class LabelController extends Controller
             return response()->json(['error message' => $exception->getMessage()]);
         }
 
-        return response()->json(['status' => '200', 'message' => 'Label successfully deleted']);
+        return response()->json(['status' => '200', 'message' => 'Labels successfully deleted']);
     }
 }

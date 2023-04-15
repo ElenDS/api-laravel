@@ -6,7 +6,7 @@ Content-type: application/json
     "users": [
         {
             "username": "000com",
-            "email": "test000@gmail.com",
+            "email": "olenadodon000@gmail.com",
             "country_code": "UA"
         },
         {
@@ -26,7 +26,7 @@ Content-type: application/json
     "users": [
         {
             "username": "000111com",
-            "email": "test000@gmail.com",
+            "email": "olenadodon000@gmail.com",
             "country_code": "UA"
         },
         {
@@ -35,9 +35,32 @@ Content-type: application/json
             "country_code": "WF"
         }
     ],
-    "email": "test000@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
+
+###
+DELETE http://api.localhost/api/users
+Accept: application/json
+Content-type: application/json
+
+{
+    "users": [
+        {
+            "username": "000111com",
+            "email": "olenadodon000@gmail.com",
+            "country_code": "UA"
+        },
+        {
+            "username": "nsssse",
+            "email": "test@gmail.com",
+            "country_code": "WF"
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
+}
+
 
 ###
 GET http://api.localhost/api/users
@@ -45,39 +68,73 @@ Accept: application/json
 Content-type: application/json
 
 ###
-POST http://api.localhost/api/label
+POST http://api.localhost/api/labels
 Accept: application/json
 Content-type: application/json
 
 {
-    "label": {
-        "name": "label5"
-    },
-    "email": "test000@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "labels": [
+        {
+            "name": "label5f"
+        },
+        {
+            "name": "label66"
+        },
+        {
+            "name": "label88"
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
-PUT http://api.localhost/api/label/{id}
+PUT http://api.localhost/api/link-labels
 Accept: application/json
 Content-type: application/json
 
 {
-"label": {
-"name": "labe"
-},
-"email": "test000@gmail.com",
-"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "labels": [
+        {
+            "name": "label5f",
+            "projects": [
+                {
+                    "name": "project2"
+                },
+                {
+                    "name": "project9"
+                }
+            ]
+        },
+        {
+            "name": "label88",
+            "projects": [
+                {
+                    "name": "project7"
+                }
+            ]
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
-DELETE http://api.localhost/api/label/{id}
+DELETE http://api.localhost/api/labels
 Accept: application/json
 Content-type: application/json
 
 {
-"email": "test000@gmail.com",
-"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "labels": [
+        {
+            "name": "label5f"
+        },
+        {
+            "name": "label66"
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
@@ -86,72 +143,142 @@ Accept: application/json
 Content-type: application/json
 
 {
-"email": "test000@gmail.com",
-"token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
-POST http://api.localhost/api/project
+POST http://api.localhost/api/projects
 Accept: application/json
 Content-type: application/json
 
 {
-    "project": {
-            "name": "project9"
-        },
-    "members": [
-      {
-        "email": "olenadodon000@gmail.com"
-      }
-    ],
-    "labels": [
+    "projects": [
         {
-            "name": "label3"
+            "name": "project99",
+            "members": [
+                {
+                    "email": "olenadodon000@gmail.com"
+                }
+            ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label4"
+                }
+            ]
         },
         {
-            "name": "label1"
+            "name": "project999",
+            "members": [
+                {
+                    "email": "olenadodon000@gmail.com"
+                }
+            ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label4"
+                }
+            ]
         }
     ],
-
-    "email": "test000@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
-PUT http://api.localhost/api/project/{id}
+PUT http://api.localhost/api/projects
 Accept: application/json
 Content-type: application/json
 
 {
-    "project": {
-        "name": "project"
-    },
-    "members": [
+    "projects": [
         {
-            "email": "test@gmail.com"
-        }
-    ],
-    "labels": [
-        {
-            "name": "label5"
+            "name": "project99",
+            "members": [
+                {
+                    "email": "olenadodon000@gmail.com"
+                }
+            ],
+            "labels": [
+                {
+                    "name": "label5"
+                },
+                {
+                    "name": "label4"
+                }
+            ]
         },
         {
-            "name": "label1"
+            "name": "project999",
+            "members": [
+                {
+                    "email": "olenadodon000@gmail.com"
+                }
+            ],
+            "labels": [
+                {
+                    "name": "label5"
+                },
+                {
+                    "name": "label4"
+                }
+            ]
         }
     ],
-
-    "email": "test000@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
-DELETE http://api.localhost/api/project/{id}
+DELETE http://api.localhost/api/projects
 Accept: application/json
 Content-type: application/json
 
 {
-    "email": "test000@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "projects": [
+        {
+            "name": "project99"
+        },
+        {
+            "name": "project999"
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
+}
+
+###
+PUT http://api.localhost/api/link-projects
+Accept: application/json
+Content-type: application/json
+
+{
+    "projects": [
+        {
+            "name": "project2",
+            "users": [
+                {
+                    "email": "test@gmail.com"
+                }
+            ]
+        },
+        {
+            "name": "project7",
+            "users": [
+                {
+                    "email": "test@gmail.com"
+                }
+            ]
+        }
+    ],
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 ###
@@ -160,8 +287,8 @@ Accept: application/json
 Content-type: application/json
 
 {
-    "email": "test00@gmail.com",
-    "token": "65031821964308e00add13dae45c2eae1da9e7fd2d3d93c5feb62e779e9a0e"
+    "email": "olenadodon000@gmail.com",
+    "token": ""
 }
 
 
