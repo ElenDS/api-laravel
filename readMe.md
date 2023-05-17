@@ -1,20 +1,297 @@
-# What inside
-1. **Redis** - 6.2.0
-2. **Mysql** - 8.0.28
-3. **RabbitMQ** - 3.10.2
-4. **Nginx** - 1.12
-5. **Php-fpm** - 8.1 (With all extensions & code examples to work with described above services).
-6. **Docker-compose** with **traefik**.
+I am pleased to present my Laravel-based API project.
+The API provide the functionality to create users, associate multiple projects with multiple users and multiple labels with multiple projects.
 
-# How to install
-1. Run `docker-compose up -d`
-2. Go to http://api-proxy.localhost/ to see traefik dashboard
-4. Go to http://api.localhost/ to test nginx & php works as expected
-3. Go into php container `docker exec -it demo-app sh`
-   1. Run `composer install`
-   2. Run `php ./src/redis/test.php` to test redis.
-   3. Run `php ./src/mysql/test.php` to test mysql.
-   4. To test rabbit we need run 2 commands:
-      1. Push message to queue - `php ./src/rabbit/publish.php`
-      2. Read message from queue - `php ./src/rabbit/consume.php`
-4. It's all!) Now you can modify any code for your needs.
+# What inside
+**Laravel**
+
+**Mysql**
+
+**Docker Compose**
+
+# How to use
+
+Create Users
+```
+POST /api/users
+
+{
+    "users": [
+        {
+            "username": "name1",
+            "email": "user_email1",
+            "country_code": "UA"
+        },
+        {
+            "username": "name2",
+            "email": "user_email2",
+            "country_code": "BV"
+        }
+    ]
+}
+```
+
+Update Users
+```
+PUT /api/users
+
+{
+    "users": [
+        {
+            "username": "name1",
+            "email": "user_email1",
+            "country_code": "UA"
+        },
+        {
+            "username": "name2",
+            "email": "user_email2",
+            "country_code": "WF"
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Delete Users
+```
+DELETE /api/users
+
+{
+    "users": [
+        {
+            "email": "user_email1"
+        },
+        {
+            "email": "user_email2"
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Get List Of Users
+```
+GET /api/users
+
+{
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Create Labels
+```
+POST /api/labels
+
+{
+    "labels": [
+        {
+            "name": "label1"
+        },
+        {
+            "name": "label2"
+        },
+        {
+            "name": "label3"
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Link Labels To Projects
+```
+PUT /api/link-labels
+
+{
+    "labels": [
+        {
+            "name": "label1",
+            "projects": [
+                {
+                    "name": "project1"
+                },
+                {
+                    "name": "project2"
+                }
+            ]
+        },
+        {
+            "name": "label2",
+            "projects": [
+                {
+                    "name": "project1"
+                }
+            ]
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Delete Labels
+```
+DELETE /api/labels
+
+{
+    "labels": [
+        {
+            "name": "label1"
+        },
+        {
+            "name": "label2"
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Get List Of Labels
+```
+GET /api/labels
+
+{
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Create Projects
+```
+POST /api/projects
+
+{
+    "projects": [
+        {
+            "name": "project1",
+            "members": [
+                    {
+                        "email": "email1"
+                    }
+                ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label2"
+                }
+            ]
+        },
+       {
+            "name": "project2",
+            "members": [
+                    {
+                        "email": "email2"
+                    }
+                ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label2"
+                }
+            ]
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Update Projects
+```
+PUT /api/projects
+
+{
+    "projects": [
+        {
+            "name": "project1",
+            "members": [
+                    {
+                        "email": "email1"
+                    }
+                ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label2"
+                }
+            ]
+        },
+       {
+            "name": "project2",
+            "members": [
+                    {
+                        "email": "email2"
+                    }
+                ],
+            "labels": [
+                {
+                    "name": "label1"
+                },
+                {
+                    "name": "label2"
+                }
+            ]
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Delete Projects
+```
+DELETE /api/projects
+
+{
+    "projects": [
+        {
+            "name": "project99"
+        },
+        {
+            "name": "project999"
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Link Projects To Users
+```
+PUT /api/link-projects
+
+{
+    "projects": [
+        {
+            "name": "project1",
+            "users": [
+                {
+                "email": "user_email1"
+                }
+            ]
+        },
+        {
+            "name": "project2",
+            "users": [
+                {
+                "email": "user_email1"
+                }
+            ]
+        }
+    ],
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+Get List Of Projects
+```
+GET /api/projects
+
+{
+    "email": "email_for_authorization",
+    "token": "token_for_athorization"
+}
+```
+
+
+

@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Repositories\CountryRepository;
 
 class CreateUserDataService
 {
+    public function __construct(protected CountryRepository $countryRepository)
+    {
+    }
+
     public function createDataUsers(array $request): array
     {
         $dataUsers = [];
@@ -13,7 +19,7 @@ class CreateUserDataService
             $dataUsers[] = [
                 'name' => $user['username'],
                 'email' => $user['email'],
-                'country_id' => (new CountryRepository)->findByCountryCode($user['country_code'])
+                'country_id' => $this->countryRepository->findByCountryCode($user['country_code'])
             ];
         }
 

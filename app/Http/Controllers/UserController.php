@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\UserRequest;
 use App\Repositories\UserRepository;
 use App\Services\CreateUserDataService;
 use App\Services\SendVerifyLinkService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class UserController
@@ -46,16 +48,16 @@ class UserController
     public function verifyUser(
         string $id,
         string $hash,
-        SendVerifyLinkService $linkService
+        SendVerifyLinkService $emailVerification
     ): JsonResponse {
         $email = $this->userRepository->findUserById($id)->email;
 
-        if (!$linkService->findVerifyLink($email, $hash)) {
+        if (!$emailVerification->findVerifyLink($email, $hash)) {
             return response()->json(['error' => 'Invalid URL']);
         }
 
         $token = $this->userRepository->createToken($email);
-        $linkService->deleteLink($email, $hash);
+        $emailVerification->deleteLink($email, $hash);
 
         return response()->json(['status' => '200', 'token' => $token]);
     }
@@ -65,11 +67,6 @@ class UserController
         CreateUserDataService $dataService,
     ): JsonResponse {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
-
             $dataUsers = $dataService->createDataUsers($request->get('users'));
 
             DB::beginTransaction();
@@ -94,14 +91,9 @@ class UserController
         ]);
     }
 
-    public function deleteUsers(UserRequest $request): JsonResponse
+    public function deleteUsers(DeleteUserRequest $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
-
             DB::beginTransaction();
             foreach ($request->get('users') as $user) {
                 $this->userRepository->deleteUser($user);

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\DTO\ProjectsDTO;
 use App\Http\Requests\ProjectRequest;
 use App\Repositories\LabelRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
+use App\Services\ProjectsEntryDataService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,15 +38,13 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function createProjects(ProjectRequest $request): JsonResponse
+    public function createProjects(ProjectRequest $request, ProjectsEntryDataService $entryDataService): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
-            $projectsData = $this->getProjectData($request, $user->id);
+            $projectsDTO = new ProjectsDTO($request->get('projects'), $user->id);
+            $projectsData = $entryDataService->createEntryData($projectsDTO);
 
             DB::beginTransaction();
             foreach ($projectsData as $project) {
@@ -60,45 +60,16 @@ class ProjectController extends Controller
         return response()->json(['status' => '200', 'message' => 'Projects successfully created']);
     }
 
-    public function getProjectData(ProjectRequest $request, int $id): array
-    {
-        $data = [];
-        foreach ($request->get('projects') as $project) {
-            $members = array_reduce($project['members'], function ($members, $member) {
-                $members[] = $this->userRepository->findUserByEmail($member['email'])->id;
-
-                return $members;
-            }, []);
-
-            $labels = array_reduce($project['labels'], function ($labels, $label) {
-                $labels[] = $this->labelRepository->findLabelByName($label['name'])->id;
-
-                return $labels;
-            }, []);
-
-            $data[] = [
-                'name' => $project['name'],
-                'created_by_user' => $id,
-                'members' => $members,
-                'labels' => $labels,
-            ];
-        }
-
-        return $data;
-    }
-
-    public function updateProjects(ProjectRequest $request): JsonResponse
+    public function updateProjects(ProjectRequest $request, ProjectsEntryDataService $entryDataService): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
-            $projectData = $this->getProjectData($request, $user->id);
+            $projectsDTO = new ProjectsDTO($request->get('projects'), $user->id);
+            $projectsData = $entryDataService->createEntryData($projectsDTO);
 
             DB::beginTransaction();
-            foreach ($projectData as $project) {
+            foreach ($projectsData as $project) {
                 $projectUserID = $this->projectRepository->findProjectByName($project['name'])->created_by_user;
                 if ($projectUserID !== $user->id) {
                     throw new Exception("The user does not have permission for this action");
@@ -114,13 +85,11 @@ class ProjectController extends Controller
 
         return response()->json(['status' => '200', 'message' => 'Projects successfully updated']);
     }
+
     public function linkProjectsToUsers(Request $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
             DB::beginTransaction();
             foreach ($request->get('projects') as $projectData) {
@@ -129,11 +98,10 @@ class ProjectController extends Controller
                     throw new Exception("The user does not have permission for this action");
                 }
 
-                array_walk($projectData['users'], function($user, $key, $project){
+                array_walk($projectData['users'], function ($user, $key, $project) {
                     $user = $this->userRepository->findUserByEmail($user['email']);
                     $this->projectRepository->linkMemberToProject($project, $user->id);
                 }, $project);
-
             }
             DB::commit();
         } catch (Exception $exception) {
@@ -143,15 +111,12 @@ class ProjectController extends Controller
         }
 
         return response()->json(['status' => '200', 'message' => 'Projects successfully linked to users']);
-        }
+    }
 
     public function deleteProjects(Request $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
             DB::beginTransaction();
             foreach ($request->get('projects') as $project) {

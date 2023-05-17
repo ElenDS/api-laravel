@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Jobs\SendEmailVerificationJob;
@@ -15,7 +17,7 @@ class SendVerifyLinkService
         $link->uniqid = $hash;
         $link->save();
 
-        $verifyLink = 'http://api.localhost/verify/' . $id . '/' . $hash;
+        $verifyLink = config('app.constants.VERIFICATION_LINK') . $id . '/' . $hash;
 
         SendEmailVerificationJob::dispatch($verifyLink, $email);
     }

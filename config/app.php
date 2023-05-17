@@ -213,4 +213,8 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'constants' => [
+        'VERIFICATION_LINK' => 'http://api.localhost/verify/',
+    ],
+
 ];

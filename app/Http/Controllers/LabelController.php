@@ -24,10 +24,7 @@ class LabelController extends Controller
 
     public function listLabels(Request $request): JsonResponse
     {
-        $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-        if (!$user) {
-            return response()->json(['error' => 'The user does not have permission for this action']);
-        }
+        $user = $request->user;
 
         return response()->json([
             'status' => '200',
@@ -38,10 +35,7 @@ class LabelController extends Controller
     public function createLabels(LabelRequest $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
             DB::beginTransaction();
             foreach ($request->get('labels') as $label) {
@@ -60,10 +54,7 @@ class LabelController extends Controller
     public function linkLabelsToProjects(Request $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
             DB::beginTransaction();
             foreach ($request->get('labels') as $labelData) {
@@ -89,10 +80,7 @@ class LabelController extends Controller
     public function deleteLabels(Request $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $request->get('token'));
-            if (!$user) {
-                throw new Exception("Invalid token");
-            }
+            $user = $request->user;
 
             DB::beginTransaction();
             foreach ($request->get('labels') as $label) {
