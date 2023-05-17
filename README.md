@@ -4,7 +4,7 @@ The API provide the functionality to create users, associate multiple projects w
 # What inside
 **Laravel**
 
-**Mysql**
+**MySQL**
 
 **Docker Compose**
 
