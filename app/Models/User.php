@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +19,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'country_id'
     ];
 
     /**
@@ -41,4 +40,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function country()
+    {
+        return $this->belongsTo('App\Models\Country');
+    }
+
+    public function ownProject()
+    {
+        return $this->belongsTo('App\Models\Project');
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany('App\Models\Project');
+    }
 }

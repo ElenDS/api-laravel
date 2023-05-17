@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('label_project', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
-            $table->foreignIdFor(\App\Models\Country::class);
+            $table->foreignIdFor(\App\Models\Project::class)->constrained()->onDelete('cascade');;
+            $table->foreignIdFor(\App\Models\Label::class)->constrained()->onDelete('cascade');;
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('label_project');
     }
 };
