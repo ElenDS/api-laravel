@@ -217,4 +217,6 @@ return [
         'VERIFICATION_LINK' => 'http://api.localhost/verify/',
     ],
 
+    'jwt_secret' => 'apilaravelkey',
+
 ];

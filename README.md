@@ -34,6 +34,8 @@ Update Users
 ```
 PUT /api/users
 
+Authorization: Bearer jwt
+
 {
     "users": [
         {
@@ -46,14 +48,14 @@ PUT /api/users
             "email": "user_email2",
             "country_code": "WF"
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Delete Users
 ```
 DELETE /api/users
+
+Authorization: Bearer jwt
 
 {
     "users": [
@@ -63,23 +65,21 @@ DELETE /api/users
         {
             "email": "user_email2"
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Get List Of Users
 ```
 GET /api/users
 
-{
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
-}
+Authorization: Bearer jwt
+
 ```
 Create Labels
 ```
 POST /api/labels
+
+Authorization: Bearer jwt
 
 {
     "labels": [
@@ -92,14 +92,14 @@ POST /api/labels
         {
             "name": "label3"
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Link Labels To Projects
 ```
 PUT /api/link-labels
+
+Authorization: Bearer jwt
 
 {
     "labels": [
@@ -122,14 +122,14 @@ PUT /api/link-labels
                 }
             ]
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Delete Labels
 ```
 DELETE /api/labels
+
+Authorization: Bearer jwt
 
 {
     "labels": [
@@ -139,23 +139,20 @@ DELETE /api/labels
         {
             "name": "label2"
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Get List Of Labels
 ```
 GET /api/labels
 
-{
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
-}
+Authorization: Bearer jwt
 ```
 Create Projects
 ```
 POST /api/projects
+
+Authorization: Bearer jwt
 
 {
     "projects": [
@@ -191,15 +188,15 @@ POST /api/projects
                 }
             ]
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Update Projects
 ```
 PUT /api/projects
 
+Authorization: Bearer jwt
+
 {
     "projects": [
         {
@@ -234,14 +231,14 @@ PUT /api/projects
                 }
             ]
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Delete Projects
 ```
 DELETE /api/projects
+
+Authorization: Bearer jwt
 
 {
     "projects": [
@@ -251,14 +248,14 @@ DELETE /api/projects
         {
             "name": "project999"
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Link Projects To Users
 ```
 PUT /api/link-projects
+
+Authorization: Bearer jwt
 
 {
     "projects": [
@@ -278,19 +275,14 @@ PUT /api/link-projects
                 }
             ]
         }
-    ],
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
+    ]
 }
 ```
 Get List Of Projects
 ```
 GET /api/projects
 
-{
-    "email": "email_for_authorization",
-    "token": "token_for_athorization"
-}
+Authorization: Bearer jwt
 ```
 
 

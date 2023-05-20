@@ -50,7 +50,7 @@ class UserController
         string $hash,
         SendVerifyLinkService $emailVerification
     ): JsonResponse {
-        $email = $this->userRepository->findUserById($id)->email;
+        $email = $this->userRepository->findUserById(intval($id))->email;
 
         if (!$emailVerification->findVerifyLink($email, $hash)) {
             return response()->json(['error' => 'Invalid URL']);

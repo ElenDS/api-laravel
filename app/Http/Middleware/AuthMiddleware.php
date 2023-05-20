@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Http\Request;
@@ -16,21 +17,20 @@ class AuthMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->get('token');
+        $token = str_replace('Bearer ', '', $request->header('Authorization'));
         if (!$token) {
             return response()->json(['message' => 'Token missing']);
         }
-
-        $user = $this->userRepository->getUserByTokenAndEmail($request->get('email'), $token);
-        if (!$user) {
+        $user = $this->userRepository->getUserByToken($token);
+        if ($user instanceof User) {
+            $request->merge(['user' => $user]);
+            return $next($request);
+        } else {
             return response()->json(['message' => 'Invalid token']);
         }
-
-        $request->merge(['user' => $user]);
-        return $next($request);
     }
 }

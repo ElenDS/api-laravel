@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Database\Eloquent\Collection;
+use mysql_xdevapi\Exception;
 
 class UserRepository
 {
@@ -24,7 +27,7 @@ class UserRepository
         return User::where(['email' => $email])->first();
     }
 
-    public function findUserById(string $id): User
+    public function findUserById(int $id): User
     {
         return User::find($id);
     }
@@ -40,7 +43,14 @@ class UserRepository
     public function createToken(string $email): string
     {
         $user = $this->findUserByEmail($email);
-        $token = uniqid(strval(rand())) . hash('ripemd160', strval(rand()));
+
+        $secretKey = config('app.jwt_secret');
+        $payload = [
+            'user_id' => $user->id
+        ];
+
+        $token = JWT::encode($payload, $secretKey, 'HS256');
+
         $user->remember_token = $token;
         $user->email_verified_at = time();
         $user->save();
@@ -48,14 +58,18 @@ class UserRepository
         return $token;
     }
 
-    public function getUserByTokenAndEmail(string $email, string $token): User|bool
+    public function getUserByToken(string $token): User|string
     {
-        $user = $this->findUserByEmail($email);
-        if ($token === $user->remember_token) {
-            return $user;
+        $secretKey = config('app.jwt_secret');
+        try {
+            $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
+            $userId = $decoded->user_id;
+            $user = $this->findUserById($userId);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
         }
 
-        return false;
+        return $user;
     }
 
     public function listProjectsUserLinkedTo(int $id): Collection
